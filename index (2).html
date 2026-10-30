@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Physics MCQ Test</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--text:#1d2433;--muted:#6b7385;--line:#dde1ea;--accent:#3b5bdb;--ok:#1f9d55;--okbg:#e6f6ec;--bad:#d64545;--badbg:#fdeaea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151c;--card:#1c212c;--text:#e8ebf2;--muted:#9aa3b5;--line:#2f3646;--accent:#7c93ff;--ok:#4cd388;--okbg:#17321f;--bad:#ff7a7a;--badbg:#3a1c1c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12151c;--card:#1c212c;--text:#e8ebf2;--muted:#9aa3b5;--line:#2f3646;--accent:#7c93ff;--ok:#4cd388;--okbg:#17321f;--bad:#ff7a7a;--badbg:#3a1c1c;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+header{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:10px 0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+h1{font-size:1.15rem;margin:0}
+.meta{font-size:.9rem;color:var(--muted);display:flex;gap:12px}
+.bar{height:6px;background:var(--line);border-radius:3px;margin:8px 0 16px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.q h3{font-size:1rem;margin:0 0 10px;font-weight:600}
+label{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border:1px solid transparent;border-radius:8px;cursor:pointer}
+label:hover{background:var(--bg)}
+input[type=radio]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--accent);flex:none}
+label.ok{background:var(--okbg);border-color:var(--ok)}
+label.bad{background:var(--badbg);border-color:var(--bad)}
+.note{font-size:.85rem;margin-top:6px;color:var(--muted)}
+button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:12px 22px;background:var(--accent);color:#fff;cursor:pointer}
+button.alt{background:var(--card);color:var(--text);border:1px solid var(--line)}
+.actions{display:flex;gap:10px;margin:8px 0 24px}
+#result{display:none;background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center}
+#result b{font-size:2rem;display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>⚡ Dipole, Flux &amp; Gauss’s Law Test</h1><div class="meta"><span id="timer">20:00</span><span id="cnt">0/15</span></div></header>
+<div class="bar"><i id="prog"></i></div>
+<div id="result"></div>
+<div id="qs"></div>
+<div class="actions"><button id="sub">Submit Test</button><button class="alt" id="rst">Reset</button></div>
+</div>
+<script>
+var Q=[
+["What is an electric dipole?",["Two positive charges separated by a distance","Two negative charges separated by a distance","Two equal and opposite charges separated by a small distance","Two unequal charges separated by a distance"],2],
+["What is the SI unit of electric dipole moment?",["Coulomb (C)","Newton (N)","Coulomb-metre (C m)","Newton-metre (N m)"],2],
+["The direction of electric dipole moment is:",["From positive charge to negative charge","From negative charge to positive charge","Perpendicular to the dipole axis","Opposite to the electric field in all cases"],1],
+["When an electric dipole is parallel to a uniform electric field, the torque is:",["Maximum","Zero","Infinite","Negative maximum"],1],
+["An electric dipole in a uniform electric field experiences:",["A net force only","A torque only, if the dipole is not aligned with the field","Both a net force and a torque in every orientation","Neither force nor torque in every orientation"],1],
+["What is the flux of a vector field?",["The amount of field passing through a surface","The magnitude of a vector only","The length of a vector","The volume of a surface"],0],
+["What is the SI unit of electric flux?",["N/C","C/m","N·m²/C","N·m"],2],
+["Which mathematical operation is used to calculate the flux of a vector field through a surface?",["Dot product","Cross product","Ordinary division","Scalar addition"],0],
+["If a vector field points opposite to the chosen surface normal, what is the sign of the flux?",["Positive","Negative","Always zero","Always infinite"],1],
+["When is the electric flux through a flat surface zero?",["When the electric field is perpendicular to the surface","When the electric field is parallel to the surface","When the electric field is maximum","When the surface area is maximum"],1],
+["What is a Gaussian surface?",["A surface used to calculate electric flux","A surface used only to measure electric potential","A surface that always contains no charge","A surface used to calculate resistance"],0],
+["According to Gauss’s law, if the net charge enclosed by a closed surface is zero, the net electric flux is:",["Maximum","Infinite","Zero","Negative infinity"],2],
+["Gauss’s law is particularly useful for calculating electric fields when the charge distribution has:",["Symmetry","Random motion only","Changing mass","Zero volume only"],0],
+["Gauss’s law is related to which quantity?",["Electric flux","Resistance","Magnetic force","Temperature"],0],
+["Which surface is used in Gauss’s law?",["Open surface only","Flat surface only","Closed surface","Curved surface only"],2]
+];
+var L="ABCD",done=false,left=1200,tm;
+var box=document.getElementById("qs");
+function build(){
+  var h="";
+  Q.forEach(function(q,i){
+    h+='<div class="q"><h3>'+(i+1)+'. '+q[0]+'</h3>';
+    q[1].forEach(function(o,j){
+      h+='<label><input type="radio" name="q'+i+'" value="'+j+'"><span><b>'+L[j]+')</b> '+o+'</span></label>';
+    });
+    h+='<div class="note" id="n'+i+'"></div></div>';
+  });
+  box.innerHTML=h;
+}
+function answered(){return Q.filter(function(_,i){return document.querySelector('input[name=q'+i+']:checked')}).length}
+function upd(){var a=answered();document.getElementById("cnt").textContent=a+"/15";document.getElementById("prog").style.width=(a/15*100)+"%"}
+function tick(){
+  var m=Math.floor(left/60),s=left%60;
+  document.getElementById("timer").textContent="⏱ "+m+":"+(s<10?"0":"")+s;
+  if(left<=0){submit(true);return}
+  left--;
+}
+function submit(auto){
+  if(done)return;
+  var a=answered();
+  if(!auto&&a<15&&!confirm((15-a)+" sawal baqi hain. Phir bhi submit karein?"))return;
+  done=true;clearInterval(tm);
+  var score=0;
+  Q.forEach(function(q,i){
+    var labs=box.querySelectorAll('input[name=q'+i+']');
+    var pick=-1;
+    labs.forEach(function(r,j){if(r.checked)pick=j;r.disabled=true});
+    labs[q[2]].parentNode.classList.add("ok");
+    if(pick===q[2]){score++;document.getElementById("n"+i).textContent="✔ Sahi"}
+    else{
+      if(pick>=0)labs[pick].parentNode.classList.add("bad");
+      document.getElementById("n"+i).textContent=(pick<0?"Jawab nahi diya. ":"✘ Galat. ")+"Sahi jawab: "+L[q[2]];
+    }
+  });
+  var r=document.getElementById("result");
+  r.style.display="block";
+  r.innerHTML="<b>"+score+" / 15</b>"+(score>=12?"Shandaar! 🎉":score>=8?"Achha hai, thori aur tayyari karein 👍":"Dobara parhein aur try karein 💪");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function reset(){
+  done=false;left=1200;clearInterval(tm);
+  document.getElementById("result").style.display="none";
+  build();upd();tick();tm=setInterval(tick,1000);
+  window.scrollTo({top:0});
+}
+box.addEventListener("change",upd);
+document.getElementById("sub").onclick=function(){submit(false)};
+document.getElementById("rst").onclick=reset;
+reset();
+</script>
+</body>
+</html>
